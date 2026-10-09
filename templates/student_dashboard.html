@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Student Management System</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fe;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a, #1e293b);
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            z-index: 10;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 10px 20px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #38bdf8;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .sidebar-brand span {
+            font-size: 12.5px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .menu-list {
+            list-style: none;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            max-height: calc(100vh - 170px);
+            padding-right: 4px;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item i {
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-logout {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .flash-messages {
+            margin-bottom: 25px;
+        }
+        .alert {
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .alert-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: fadeIn 0.35s ease-in-out;
+            margin-bottom: 30px;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title-container {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            position: relative;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            color: #2563eb;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #2563eb;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .btn-submit {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(90deg, #1d4ed8, #2563eb);
+            transform: translateY(-2px);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px 18px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #fafafa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .badge-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .btn-action {
+            padding: 9px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary-sm { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .btn-primary-sm:hover { background-color: #2563eb; color: white; }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 35px;
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .profile-passport {
+            width: 120px;
+            height: 150px;
+            border-radius: 8px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #94a3b8;
+            border: 3px solid #2563eb;
+            overflow: hidden;
+            object-fit: cover;
+        }
+        .profile-passport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-user-graduate" style="font-size: 20px; margin-bottom: 5px; color: #38bdf8;"></i>
+                {{ session.name }}
+                <span>Darasa: {{ info.darasa if info else 'Haijulikani' }}</span>
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="showTab('profile-card', this)">
+                    <i class="fa-solid fa-user"></i> Wasifu Wako
+                </li>
+                <li class="menu-item" onclick="showTab('assignment-card', this)">
+                    <i class="fa-solid fa-file-lines"></i> My Assignments
+                </li>
+                <!-- Kitufe kipya cha kusubmit assignment -->
+                <li class="menu-item" onclick="showTab('submit-assignment-card', this)">
+                    <i class="fa-solid fa-upload"></i> Submit Assignment
+                </li>
+                <li class="menu-item" onclick="showTab('marks-card', this)">
+                    <i class="fa-solid fa-chart-bar"></i> Matokeo Yangu
+                </li>
+                <li class="menu-item" onclick="showTab('teachers-card', this)">
+                    <i class="fa-solid fa-chalkboard-user"></i> Masomo & Walimu
+                </li>
+                <li class="menu-item" onclick="showTab('fee-card', this)">
+                    <i class="fa-solid fa-wallet"></i> Fee Submission
+                </li>
+                <li class="menu-item" onclick="showTab('attendance-card', this)">
+                    <i class="fa-solid fa-calendar-check"></i> Mahudhurio
+                </li>
+                <li class="menu-item" onclick="showTab('hall-ticket-card', this)">
+                    <i class="fa-solid fa-id-card"></i> Hall Ticket
+                </li>
+                <li class="menu-item" onclick="showTab('edit-profile-card', this)">
+                    <i class="fa-solid fa-user-gear"></i> Badilisha Profile
+                </li>
+            </ul>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Ondoka
+        </a>
+    </div>
+
+    <div class="main-content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div id="profile-card" class="card active">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user"></i> Taarifa za Wasifu Wako</h3>
+            </div>
+            <div class="profile-container">
+                <div class="profile-passport">
+                    <img src="{{ url_for('static', filename='uploads/' + (info.profile_pic if info.profile_pic else 'default.png')) }}" alt="Profile Photo">
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                    <h4 style="font-size: 20px; color: #0f172a; margin-bottom: 4px;">{{ info.name }}</h4>
+                    <p style="color: #64748b; font-size: 14px;">Username: <strong style="color: #1e293b;">{{ info.username }}</strong></p>
+                    <p style="color: #64748b; font-size: 14px;">Darasa / Kidato: <strong style="color: #2563eb;">{{ info.darasa }}</strong></p>
+                    <p style="color: #64748b; font-size: 14px;">Jinsia: <strong style="color: #1e293b;">{{ info.jinsia }}</strong></p>
+                    <p style="color: #64748b; font-size: 14px;">Mahali Anapoishi: <strong style="color: #1e293b;">{{ info.mahali_anapoishi }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="assignment-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-file-lines"></i> Kazi za Nyumbani (Assignments)</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Somo</th>
+                            <th>Mwalimu</th>
+                            <th>Kichwa cha Habari</th>
+                            <th>Deadline</th>
+                            <th>Maelezo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asm in assignments %}
+                        <tr>
+                            <td><strong>{{ asm.somo }}</strong></td>
+                            <td>{{ asm.teacher_name }}</td>
+                            <td><strong>{{ asm.title }}</strong></td>
+                            <td><span class="badge badge-danger"><i class="fa-solid fa-calendar-days"></i> {{ asm.deadline }}</span></td>
+                            <td>{{ asm.description }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">
+                                Hakuna assignment zilizotumwa kwa darasa lako kwa sasa.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SEHEMU MPYA: WASILISHA ASSIGNMENT (SUBMIT ASSIGNMENT) -->
+        <div id="submit-assignment-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-upload"></i> Wasilisha Assignment (Submit Assignment)</h3>
+            </div>
+            <form action="{{ url_for('submit_assignment') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Chagua Kichwa cha Assignment</label>
+                        <select name="title" required>
+                            <option value="">Chagua Assignment</option>
+                            {% for asm in assignments %}
+                                <option value="{{ asm.title }}">{{ asm.title }} (Somo: {{ asm.somo }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Pakia Faili la Kazi Yako (PDF, Word, au Picha)</label>
+                        <input type="file" name="assignment_file" required style="padding: 10px; background: #fff;">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Tuma Kazi kwa Mwalimu</button>
+            </form>
+        </div>
+
+        <div id="marks-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-chart-bar"></i> Matokeo Yangu ya Masomo</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Somo</th>
+                            <th>Aina ya Tathmini</th>
+                            <th>Namba / Cheo</th>
+                            <th>Alama (Marks)</th>
+                            <th>Tarehe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if student_marks_list %}
+                            {% for m in student_marks_list %}
+                            <tr>
+                                <td><strong>{{ m.somo }}</strong></td>
+                                <td>{{ m.aina_ya_tathmini }}</td>
+                                <td>{{ m.aina_ya_tathmini }} {{ m.namba_ya_tathmini }}</td>
+                                <td><span class="badge badge-success">{{ m.alama }} Marks</span></td>
+                                <td>{{ m.tarehe }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">
+                                    Bado hakuna alama zilizowekwa kwenye akaunti yako kwa sasa.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="teachers-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> Masomo na Walimu Wako</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Somo</th>
+                            <th>Jina la Mwalimu</th>
+                            <th>Darasa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in walimu_masomo %}
+                        <tr>
+                            <td><strong>{{ t.somo }}</strong></td>
+                            <td>{{ t.teacher_name }}</td>
+                            <td>{{ t.darasa_la_kufundisha }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #64748b; padding: 25px;">
+                                Hakuna walimu waliopatikana kwa darasa lako kwa sasa.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="fee-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-wallet"></i> Hali ya Malipo ya Ada</h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 15px; background: #f8fafc; padding: 30px; border-radius: 16px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 14.5px;">Ada Inayotakiwa: <strong style="color: #0f172a;">Tsh {{ info.fee_required }}</strong></p>
+                <p style="font-size: 14.5px;">Ada Iliyolipwa: <strong style="color: #16a34a;">Tsh {{ info.ada_iliyolipwa }}</strong></p>
+                <p style="font-size: 14.5px;">Kiasi Kilichobaki (Deni): <strong style="color: #ef4444;">Tsh {{ deni }}</strong></p>
+                <p style="font-size: 14.5px;">Asilimia Iliyolipwa: <strong style="color: #2563eb;">{{ perms.percentage }}%</strong></p>
+            </div>
+        </div>
+
+        <div id="attendance-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-calendar-check"></i> Historia ya Mahudhurio Yako</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarehe</th>
+                            <th>Hali (Attendance)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for att in mahudhurio %}
+                        <tr>
+                            <td>{{ att.tarehe }}</td>
+                            <td>
+                                {% if att.hali == 'Yupo' %}
+                                    <span class="badge badge-success">Yupo</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Hayupo</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: #64748b; padding: 25px;">
+                                Hakuna kumbukumbu za mahudhurio kwa sasa.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="hall-ticket-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-id-card"></i> Examination Hall Ticket</h3>
+            </div>
+            <div style="background: #f8fafc; padding: 35px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: center;">
+                {% if perms.can_take_exams %}
+                    <p style="color: #16a34a; font-weight: 600; margin-bottom: 20px;">Hongera! Umefikisha 100% ya ada na unaruhusiwa kupakua Hall Ticket yako.</p>
+                    <a href="{{ url_for('download_hall_ticket') }}" class="btn-action btn-primary-sm" style="padding: 14px 28px; font-size: 15px;" target="_blank">
+                        <i class="fa-solid fa-download"></i> Pakua / Tazama Hall Ticket
+                    </a>
+                {% else %}
+                    <p style="color: #ef4444; font-weight: 600; margin-bottom: 10px;">Huna ruhusa ya kupakua Hall Ticket kwa sababu hujamaliza 100% ya ada.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="edit-profile-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user-gear"></i> Badilisha Taarifa na Picha ya Wasifu</h3>
+            </div>
+            <form action="{{ url_for('student_update_profile') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <label>Weka Picha Mpya ya Wasifu (Passport Size)</label>
+                        <input type="file" name="profile_pic" accept="image/*" style="padding: 10px; background: #fff;">
+                    </div>
+                    <div class="input-group">
+                        <label>Username Yako Mpya</label>
+                        <input type="text" name="username" value="{{ session.username }}" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password Yako Mpya</label>
+                        <input type="text" name="password" placeholder="Weka password mpya" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Sasisha Taarifa Zangu</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const activeTab = localStorage.getItem("activeStudentTab");
+            if (activeTab) {
+                const element = document.querySelector(`[onclick*="${activeTab}"]`);
+                if (element) {
+                    showTab(activeTab, element);
+                }
+            }
+        });
+
+        function showTab(tabId, element) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active'));
+
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            const targetCard = document.getElementById(tabId);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+            if (element) {
+                element.classList.add('active');
+            }
+            
+            localStorage.setItem("activeStudentTab", tabId);
+        }
+    </script>
+</body>
+</html>

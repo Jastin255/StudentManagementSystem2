@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Student Management System</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fe;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b, #0f172a);
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 10px 20px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #60a5fa;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .sidebar-brand span {
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        .menu-list {
+            list-style: none;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: calc(100vh - 180px);
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item i {
+            font-size: 15px;
+            width: 20px;
+        }
+
+        .menu-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-logout {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 35px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+            margin-bottom: 30px;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title-container {
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-submit {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .badge-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary-sm { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .btn-primary-sm:hover { background-color: #2563eb; color: white; }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        .profile-passport {
+            width: 115px;
+            height: 150px;
+            border-radius: 6px;
+            background-color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: #64748b;
+            border: 3px solid #2563eb;
+            overflow: hidden;
+            object-fit: cover;
+        }
+        .profile-passport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-chalkboard-user" style="font-size: 18px; margin-bottom: 5px; color: #60a5fa;"></i>
+                Darasa: {{ teacher_info.darasa_la_kufundisha if teacher_info else 'Haijulikani' }}
+                <span>Somo: {{ teacher_info.somo if teacher_info else 'Haijulikani' }}</span>
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="showTab('profile-card', this)">
+                    <i class="fa-solid fa-user"></i> My Profile
+                </li>
+                <li class="menu-item" onclick="showTab('edit-profile-card', this)">
+                    <i class="fa-solid fa-user-gear"></i> Edit Profile
+                </li>
+                <li class="menu-item" onclick="showTab('marks-card', this)">
+                    <i class="fa-solid fa-marker"></i> Weka Alama
+                </li>
+                <li class="menu-item" onclick="showTab('received-assignments-card', this)">
+                    <i class="fa-solid fa-inbox"></i> Kazi za Wanafunzi
+                </li>
+                <!-- Kitufe kipya cha Kutengeneza na Kutuma PDF ya Matokeo -->
+                <li class="menu-item" onclick="showTab('generate-pdf-card', this)">
+                    <i class="fa-solid fa-file-pdf"></i> Tengeneza Matokeo (PDF)
+                </li>
+                <li class="menu-item" onclick="showTab('excuse-card', this)">
+                    <i class="fa-solid fa-file-invoice"></i> Mahudhurio & Udhuru Wangu
+                </li>
+                <li class="menu-item" onclick="showTab('attendance-card', this)">
+                    <i class="fa-solid fa-calendar-check"></i> Mahudhurio ya Wanafunzi
+                </li>
+                <li class="menu-item" onclick="showTab('assignment-card', this)">
+                    <i class="fa-solid fa-file-lines"></i> Toa Assignment
+                </li>
+                <li class="menu-item" onclick="showTab('add-student-card', this)">
+                    <i class="fa-solid fa-user-plus"></i> Sajili Mwanafunzi
+                </li>
+            </ul>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Ondoka
+        </a>
+    </div>
+
+    <div class="main-content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div id="profile-card" class="card active">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user"></i> Taarifa za Profaili Yangu (My Profile)</h3>
+            </div>
+            <div class="profile-container">
+                <div class="profile-passport">
+                    <img src="{{ url_for('static', filename='uploads/' + (teacher_info.profile_pic if teacher_info.profile_pic else 'default.png')) }}" alt="Profile Photo">
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="font-size: 18px; color: #1e293b; margin-bottom: 5px;">{{ session.name }}</h4>
+                    <p style="color: #64748b; font-size: 13.5px; margin-bottom: 5px;">Username Yako: <strong>{{ session.username }}</strong></p>
+                    <p style="color: #64748b; font-size: 13.5px; margin-bottom: 5px;">Somo Lako: <strong style="color: #2563eb;">{{ teacher_info.somo if teacher_info else '-' }}</strong></p>
+                    <p style="color: #64748b; font-size: 13.5px; margin-bottom: 5px;">Darasa Unalofundisha: <strong>{{ teacher_info.darasa_la_kufundisha if teacher_info else '-' }}</strong></p>
+                    <p style="color: #64748b; font-size: 13.5px; margin-bottom: 8px;">Idadi ya Wanafunzi Wako: <span class="badge badge-success">{{ wanafunzi|length }} Wanafunzi</span></p>
+                    <p style="color: #16a34a; font-size: 14px; font-weight: 600;">Mshahara: Tsh {{ teacher_info.mshahara if teacher_info else '0' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-profile-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user-gear"></i> Badilisha Taarifa na Picha ya Wasifu</h3>
+            </div>
+            <form action="{{ url_for('teacher_update_profile') }}" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label>Weka Picha Mpya (Passport Size)</label>
+                    <input type="file" name="profile_pic" accept="image/*">
+                </div>
+                <div class="input-group">
+                    <label>Username Yako</label>
+                    <input type="text" name="username" value="{{ session.username }}" required>
+                </div>
+                <div class="input-group">
+                    <label>Password Yako Mpya</label>
+                    <input type="text" name="password" placeholder="Weka password mpya" required>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Sasisha Profile Yako</button>
+            </form>
+        </div>
+
+        <div id="marks-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-marker"></i> Usimamizi wa Alama za Wanafunzi ({{ teacher_info.darasa_la_kufundisha }})</h3>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Namba</th>
+                            <th>Mwanafunzi</th>
+                            <th>Darasa</th>
+                            <th>Weka Alama Mpya & Aina ya Tathmini</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in wanafunzi %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ std.name }}</strong></td>
+                            <td>{{ std.darasa }}</td>
+                            <td>
+                                <form action="{{ url_for('update_marks') }}" method="POST" style="display: flex; gap: 8px; align-items: center; margin: 0;">
+                                    <input type="hidden" name="username" value="{{ std.username }}">
+                                    <input type="text" value="{{ teacher_info.somo }}" readonly style="padding: 6px; font-size: 12px; width: 120px; background: #f1f5f9; font-weight: 600; color: #2563eb;">
+                                    <select name="aina_ya_tathmini" style="padding: 6px; font-size: 12px; width: 130px;" required>
+                                        <option value="">Chagua Aina</option>
+                                        <option value="Assignment">Assignment</option>
+                                        <option value="Test">Test</option>
+                                        <option value="Final Exam">Final Exam</option>
+                                    </select>
+                                    <input type="number" step="0.01" name="alama" placeholder="Alama" style="padding: 6px; font-size: 12px; width: 90px;" required>
+                                    <button type="submit" class="btn-action btn-primary-sm"><i class="fa-solid fa-check"></i> Hifadhi</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">
+                                Hakuna wanafunzi waliopatikana kwenye darasa lako kwa sasa.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 35px;">
+                <h4 style="margin-bottom: 15px; color: #1e293b; font-size: 16px;"><i class="fa-solid fa-list-check"></i> Alama Ulizowajazia Wanafunzi (Unaweza Kuzihariri)</h4>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username ya Mwanafunzi</th>
+                                <th>Somo</th>
+                                <th>Aina ya Tathmini</th>
+                                <th>Namba</th>
+                                <th>Alama</th>
+                                <th>Kitendo (Action)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if teacher_marks_list %}
+                                {% for m in teacher_marks_list %}
+                                <tr>
+                                    <td><strong>{{ m.username }}</strong></td>
+                                    <td>{{ m.somo }}</td>
+                                    <td>{{ m.aina_ya_tathmini }}</td>
+                                    <td>{{ m.aina_ya_tathmini }} {{ m.namba_ya_tathmini }}</td>
+                                    <td>
+                                        <form action="{{ url_for('edit_mark', mark_id=m.id) }}" method="POST" style="display: flex; gap: 8px; align-items: center; margin: 0;">
+                                            <input type="number" step="0.01" name="alama" value="{{ m.alama }}" style="padding: 5px; width: 80px; font-size: 12px;" required>
+                                            <button type="submit" class="btn-action btn-primary-sm" style="background-color: #16a34a; color: white; border: none;"><i class="fa-solid fa-pen-to-square"></i> Badili</button>
+                                        </form>
+                                    </td>
+                                    <td><small style="color: #64748b;">{{ m.tarehe }}</small></td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">
+                                        Bado hujajaza alama zozote kwa wanafunzi wako.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="received-assignments-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-inbox"></i> Kazi Zilizowasilishwa na Wanafunzi</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mwanafunzi</th>
+                            <th>Kichwa cha Habari</th>
+                            <th>Faili Lililotumwa</th>
+                            <th>Tarehe ya Kutuma</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if received_assignments %}
+                            {% for sub in received_assignments %}
+                            <tr>
+                                <td><strong>{{ sub.student_username }}</strong></td>
+                                <td>{{ sub.title }}</td>
+                                <td>
+                                    <a href="{{ url_for('download_submitted_assignment', filename=sub.file_path) }}" class="btn-action btn-primary-sm" target="_blank">
+                                        <i class="fa-solid fa-download"></i> Pakua Faili
+                                    </a>
+                                </td>
+                                <td>{{ sub.submission_date }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #64748b; padding: 25px;">
+                                    Hakuna kazi zilizowasilishwa na wanafunzi kwa sasa.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- KADI MPYA: TENGENEZA NA TUMA MATOKEO (PDF) KWA ADMIN -->
+        <div id="generate-pdf-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-file-pdf"></i> Tengeneza na Tuma Matokeo (PDF) kwa Admin</h3>
+            </div>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                Baada ya kukamilisha kuwajazia alama wanafunzi wako wa somo la <strong>{{ teacher_info.somo }}</strong> wa darasa la <strong>{{ teacher_info.darasa_la_kufundisha }}</strong>, unaweza kubonyeza kitufe hapa chini ili kuzalisha nyaraka rasmi ya matokeo na kuituma kwa Admin ili iweze kuonekana na kupakuliwa kwa ajili ya kuchapishwa.
+            </p>
+            <form action="{{ url_for('teacher_generate_results_pdf') }}" method="POST">
+                <button type="submit" class="btn-submit" style="background: linear-gradient(90deg, #2563eb, #3b82f6);"><i class="fa-solid fa-file-arrow-up"></i> Zalisha na Tuma Matokeo (PDF) kwa Admin</button>
+            </form>
+        </div>
+
+        <!-- KADI YA MAHUDHURIO YAKO NA UDHURU (STAFF ATTENDANCE & EXCUSE) -->
+        <div id="excuse-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-file-invoice"></i> Mahudhurio Yangu & Kuomba Udhuru</h3>
+            </div>
+            
+            <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                <h4 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;"><i class="fa-solid fa-clipboard-user"></i> Sajili Mahudhurio Yako ya Leo</h4>
+                <form action="{{ url_for('take_my_attendance') }}" method="POST" style="display: flex; gap: 12px; align-items: center; margin: 0;">
+                    <div class="input-group" style="flex: 1; margin: 0;">
+                        <select name="hali" required style="padding: 10px; border-radius: 8px;">
+                            <option value="Yupo">Nipo Kazini (Present)</option>
+                            <option value="Hayupo">Sipo Kazini (Absent)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-action" style="background: #2563eb; color: white; padding: 11px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+                        <i class="fa-solid fa-check"></i> Sajili Mahudhurio
+                    </button>
+                </form>
+            </div>
+
+            <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                <p style="font-size: 15px; margin-bottom: 8px;">Asilimia Yako ya Mahudhurio (Mwezi Huu): 
+                    {% if attendance_percentage >= 90 %}
+                        <span class="badge badge-success" style="font-size: 14px;">{{ attendance_percentage }}% (Imetosha Kupata Mshahara)</span>
+                    {% else %}
+                        <span class="badge badge-danger" style="font-size: 14px;">{{ attendance_percentage }}% (Chini ya 90% - Unahitaji Udhuru)</span>
+                    {% endif %}
+                </p>
+                <p style="color: #64748b; font-size: 13.5px;">Kama mahudhurio yako ya siku za kazi (Jumatatu hadi Ijumaa) yuko chini ya asilimia 90, jaza fomu hapa chini ili kumtumia Admin ombi la udhuru.</p>
+            </div>
+
+            <form action="{{ url_for('submit_excuse') }}" method="POST">
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>Sababu ya Kutofika Kazini (Ombi la Udhuru)</label>
+                    <textarea name="sababu" rows="4" placeholder="Andika sababu yako hapa kwa kina..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Tuma Ombi la Udhuru kwa Admin</button>
+            </form>
+        </div>
+
+        <div id="attendance-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-calendar-check"></i> Usimamizi wa Mahudhurio ya Wanafunzi</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mwanafunzi</th>
+                            <th>Darasa</th>
+                            <th>Hali ya Ada (25%)</th>
+                            <th>Rekodi Mahudhurio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in wanafunzi %}
+                        <tr>
+                            <td><strong>{{ std.name }}</strong></td>
+                            <td>{{ std.darasa }}</td>
+                            <td>
+                                {% if std.can_attend %}
+                                    <span class="badge badge-success">Anaruhusiwa</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Amezuiwa</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ url_for('take_attendance') }}" method="POST" style="display: flex; gap: 8px; align-items: center; margin: 0;">
+                                    <input type="hidden" name="username" value="{{ std.username }}">
+                                    <select name="hali" style="padding: 6px; font-size: 13px; width: 120px;" required>
+                                        <option value="Yupo">Yupo</option>
+                                        <option value="Hayupo">Hayupo</option>
+                                    </select>
+                                    <button type="submit" class="btn-action btn-primary-sm"><i class="fa-solid fa-floppy-disk"></i> Rekodi</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">
+                                Hakuna wanafunzi waliopatikana kwenye darasa hili.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="assignment-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-file-lines"></i> Toa Assignment na Weka Deadline</h3>
+            </div>
+            <form action="{{ url_for('add_assignment') }}" method="POST">
+                <div class="input-group">
+                    <label>Kichwa cha Habari (Title)</label>
+                    <input type="text" name="title" placeholder="Mf. Python Control Structures" required>
+                </div>
+                <div class="input-group">
+                    <label>Darasa la Kutuma</label>
+                    <input type="text" name="darasa" value="{{ teacher_info.darasa_la_kufundisha if teacher_info else '' }}" readonly style="background-color: #f1f5f9;" required>
+                </div>
+                <div class="input-group">
+                    <label>Tarehe ya Kukusanya (Deadline)</label>
+                    <input type="date" name="deadline" required>
+                </div>
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>Maelezo ya Kazi (Description)</label>
+                    <textarea name="description" rows="4" placeholder="Andika maelezo ya kazi hapa..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Tuma Assignment kwa Wanafunzi</button>
+            </form>
+        </div>
+
+        <div id="add-student-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user-plus"></i> Sajili Mwanafunzi Mpya (Darasa lako)</h3>
+            </div>
+            <form action="{{ url_for('add_student') }}" method="POST">
+                <div class="input-group">
+                    <label>Jina Kamili</label>
+                    <input type="text" name="name" placeholder="Mf. Juma Ally" required>
+                </div>
+                <div class="input-group">
+                    <label>Barua Pepe (Email)</label>
+                    <input type="email" name="email" placeholder="Mf. juma@gmail.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Darasa / Kidato</label>
+                    <input type="text" name="darasa" value="{{ teacher_info.darasa_la_kufundisha if teacher_info else '' }}" readonly style="background-color: #f1f5f9;" required>
+                </div>
+                <div class="input-group">
+                    <label>Namba ya Simu</label>
+                    <input type="text" name="namba_ya_simu" placeholder="Mf. 0712345678">
+                </div>
+                <div class="input-group">
+                    <label>Jinsia</label>
+                    <select name="jinsia">
+                        <option value="Mme">Mme (Male)</option>
+                        <option value="Mke">Mke (Female)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Tarehe ya Kuzaliwa</label>
+                    <input type="date" name="tarehe_ya_kuzaliwa">
+                </div>
+                <div class="input-group">
+                    <label>Mahali Anapoishi</label>
+                    <input type="text" name="mahali_anapoishi" placeholder="Mf. Dar es Salaam">
+                </div>
+                <div class="input-group">
+                    <label>Jina la Mzazi / Mlezi</label>
+                    <input type="text" name="jina_la_mzazi" placeholder="Mf. Ally Juma">
+                </div>
+                <div class="input-group">
+                    <label>Neno la Siri (Password)</label>
+                    <input type="password" name="password" placeholder="******" required>
+                </div>
+                <div class="input-group">
+                    <label>Ada Iliyolipwa (Tsh)</label>
+                    <input type="number" name="ada_iliyolipwa" placeholder="Mf. 50000" value="0">
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Hifadhi Usajili wa Mwanafunzi</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const activeTab = localStorage.getItem("activeTeacherTab");
+            if (activeTab) {
+                const element = document.querySelector(`[onclick*="${activeTab}"]`);
+                if (element) {
+                    showTab(activeTab, element);
+                }
+            }
+        });
+
+        function showTab(tabId, element) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active'));
+
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            const targetCard = document.getElementById(tabId);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+            if (element) {
+                element.classList.add('active');
+            }
+            
+            localStorage.setItem("activeTeacherTab", tabId);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }
+.header { background-color: #1f538d; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+.btn-logout { background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+.container { padding: 20px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media(min-width: 768px) { .container { grid-template-columns: 1fr 1fr; } }
+.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+button { background-color: #1f538d; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; width: 100%; }
+button:hover { background-color: #153a63; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+th { background-color: #f2f2f2; }
+.btn-success { color: green; font-weight: bold; text-decoration: none; }
+.btn-danger { color: red; font-weight: bold; text-decoration: none; }
+.login-body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #e9ecef; }
+.login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+.alert { padding: 10px; background-color: #f8d7da; color: #721c24; margin-bottom: 15px; border-radius: 4px; }

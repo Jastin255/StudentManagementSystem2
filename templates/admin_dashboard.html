@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Student Management System</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fe;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a, #1e293b);
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            z-index: 10;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 10px 20px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #38bdf8;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .sidebar-brand span {
+            font-size: 12.5px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .menu-list {
+            list-style: none;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            max-height: calc(100vh - 170px);
+            padding-right: 4px;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item i {
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-logout {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .flash-messages {
+            margin-bottom: 25px;
+        }
+        .alert {
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: fadeIn 0.35s ease-in-out;
+            margin-bottom: 30px;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title-container {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            position: relative;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #2563eb;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .btn-submit {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(90deg, #1d4ed8, #2563eb);
+            transform: translateY(-2px);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px 18px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #fafafa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .badge-danger { background-color: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+
+        .btn-action {
+            padding: 9px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary-sm { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .btn-primary-sm:hover { background-color: #2563eb; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-school" style="font-size: 20px; margin-bottom: 5px; color: #38bdf8;"></i>
+                Mkuu wa Shule (Admin)
+                <span>Mfumo wa Utawala</span>
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="showTab('add-teacher-card', this)">
+                    <i class="fa-solid fa-user-plus"></i> Sajili Mwalimu
+                </li>
+                <li class="menu-item" onclick="showTab('teachers-card', this)">
+                    <i class="fa-solid fa-chalkboard-user"></i> Orodha ya Walimu
+                </li>
+                <li class="menu-item" onclick="showTab('students-card', this)">
+                    <i class="fa-solid fa-users"></i> Wanafunzi (Form 1 - 6)
+                </li>
+                <li class="menu-item" onclick="showTab('pending-card', this)">
+                    <i class="fa-solid fa-user-check"></i> Uthibitisho wa Mwanafunzi
+                </li>
+                <!-- Kitufe kipya cha Mishahara & Udhuru -->
+                <li class="menu-item" onclick="showTab('staff-salary-card', this)">
+                    <i class="fa-solid fa-money-check-dollar"></i> Mishahara & Udhuru
+                </li>
+                <li class="menu-item" onclick="showTab('fees-card', this)">
+                    <i class="fa-solid fa-wallet"></i> Uhakiki wa Ada
+                </li>
+                <li class="menu-item" onclick="showTab('pdf-card', this)">
+                    <i class="fa-solid fa-file-pdf"></i> Matokeo (PDF)
+                </li>
+            </ul>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Ondoka
+        </a>
+    </div>
+
+    <div class="main-content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- SAJILI MWALIMU -->
+        <div id="add-teacher-card" class="card active">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user-plus"></i> Sajili Mwalimu Mpya</h3>
+            </div>
+            <form action="{{ url_for('add_teacher') }}" method="POST">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Jina Kamili</label>
+                        <input type="text" name="name" placeholder="Mf. Juma Ally" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="Mf. juma_teacher" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="******" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Somo Analofundisha</label>
+                        <input type="text" name="somo" placeholder="Mf. Mathematics" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Darasa la Kufundisha</label>
+                        <input type="text" name="darasa" placeholder="Mf. Form 1" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mshahara (Tsh)</label>
+                        <input type="number" step="0.01" name="mshahara" placeholder="Mf. 500000" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Kiwango cha Elimu</label>
+                        <input type="text" name="kiwango_elimu" placeholder="Mf. Shahada ya Ualimu">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Hifadhi Mwalimu</button>
+            </form>
+        </div>
+
+        <!-- ORODHA YA WALIMU -->
+        <div id="teachers-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> Orodha ya Walimu</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jina</th>
+                            <th>Username</th>
+                            <th>Somo</th>
+                            <th>Darasa</th>
+                            <th>Mshahara</th>
+                            <th>Kitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in walimu %}
+                        <tr>
+                            <td><strong>{{ t.name }}</strong></td>
+                            <td>{{ t.username }}</td>
+                            <td>{{ t.somo }}</td>
+                            <td>{{ t.darasa_la_kufundisha }}</td>
+                            <td>Tsh {{ t.mshahara }}</td>
+                            <td>
+                                <a href="{{ url_for('remove_teacher', username=t.username) }}" class="badge badge-danger" style="text-decoration: none;"><i class="fa-solid fa-trash"></i> Futa</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Hakuna walimu waliosajiliwa.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- WANAFUNZI -->
+        <div id="students-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-users"></i> Orodha ya Wanafunzi</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jina</th>
+                            <th>Username</th>
+                            <th>Darasa</th>
+                            <th>Hali ya Ada (%)</th>
+                            <th>Kitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in wanafunzi %}
+                        <tr>
+                            <td><strong>{{ std.name }}</strong></td>
+                            <td>{{ std.username }}</td>
+                            <td>{{ std.darasa }}</td>
+                            <td><span class="badge badge-success">{{ std.percentage }}%</span></td>
+                            <td>
+                                <a href="{{ url_for('remove_student', username=std.username) }}" class="badge badge-danger" style="text-decoration: none;"><i class="fa-solid fa-trash"></i> Futa</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">Hakuna wanafunzi waliopatikana.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- UTHIBITISHO WA MWANAFUNZI -->
+        <div id="pending-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-user-check"></i> Wanafunzi Wanaosubiri Idhini</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jina</th>
+                            <th>Username</th>
+                            <th>Darasa</th>
+                            <th>Kitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in pending_students %}
+                        <tr>
+                            <td><strong>{{ std.name }}</strong></td>
+                            <td>{{ std.username }}</td>
+                            <td>{{ std.darasa }}</td>
+                            <td>
+                                <a href="{{ url_for('approve_student', username=std.username) }}" class="btn-action btn-primary-sm" style="background: #16a34a; color: white;"><i class="fa-solid fa-check"></i> Kubali</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b; padding: 25px;">Hakuna ombi lolote la usajili linalosubiri.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- KADI MPYA: MISHAHARA & UDHURU WA WAFANYAKAZI -->
+        <div id="staff-salary-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-money-check-dollar"></i> Usimamizi wa Mishahara & Udhuru wa Wafanyakazi</h3>
+            </div>
+
+            <h4 style="margin-bottom: 15px; color: #1e293b; font-size: 16px;"><i class="fa-solid fa-envelope-open-text"></i> Maombi ya Udhuru kutoka kwa Wafanyakazi</h4>
+            <div class="table-responsive" style="margin-bottom: 35px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Nafasi</th>
+                            <th>Sababu ya Udhuru</th>
+                            <th>Tarehe</th>
+                            <th>Kitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if pending_excuses %}
+                            {% for exc in pending_excuses %}
+                            <tr>
+                                <td><strong>{{ exc.username }}</strong></td>
+                                <td>{{ exc.role }}</td>
+                                <td>{{ exc.sababu }}</td>
+                                <td>{{ exc.tarehe }}</td>
+                                <td>
+                                    <div style="display: flex; gap: 8px;">
+                                        <a href="{{ url_for('approve_excuse', excuse_id=exc.id, action='accept') }}" class="btn-action" style="background: #16a34a; color: white; padding: 6px 12px; font-size: 12px; border-radius: 6px;">Kubali</a>
+                                        <a href="{{ url_for('approve_excuse', excuse_id=exc.id, action='reject') }}" class="btn-action" style="background: #ef4444; color: white; padding: 6px 12px; font-size: 12px; border-radius: 6px;">Kataa</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Hakuna maombi ya udhuru yanayosubiri idhini kwa sasa.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin-bottom: 15px; color: #1e293b; font-size: 16px;"><i class="fa-solid fa-wallet"></i> Hali ya Mishahara ya Wafanyakazi (Walimu & Admin)</h4>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jina / Username</th>
+                            <th>Nafasi</th>
+                            <th>Mshahara</th>
+                            <th>Mahudhurio (%)</th>
+                            <th>Udhuru Umeidhinishwa?</th>
+                            <th>Kitendo cha Malipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>{{ session.username }} (Wewe - Admin)</strong></td>
+                            <td>Admin</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">{{ admin_attendance }}%</span></td>
+                            <td>
+                                {% if admin_excuse %}
+                                    <span class="badge badge-success">Ndio</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Hapana</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ url_for('pay_salary', role='Admin', username=session.username) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" class="btn-action btn-primary-sm" style="background: #2563eb; color: white;">Lipia Mshahara</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% for t in walimu %}
+                        <tr>
+                            <td><strong>{{ t.name }} ({{ t.username }})</strong></td>
+                            <td>Teacher ({{ t.somo }})</td>
+                            <td>Tsh {{ t.mshahara }}</td>
+                            <td>
+                                {% if t.attendance_percentage >= 90 %}
+                                    <span class="badge badge-success">{{ t.attendance_percentage }}%</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ t.attendance_percentage }}% (&lt;90%)</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if t.has_excuse %}
+                                    <span class="badge badge-success">Ndio</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Hapana</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ url_for('pay_salary', role='Teacher', username=t.username) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" class="btn-action btn-primary-sm" style="background: #16a34a; color: white;"><i class="fa-solid fa-check"></i> Toa Mshahara</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- UHAKIKI WA ADA -->
+        <div id="fees-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-wallet"></i> Uhakiki na Uthibitisho wa Ada</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mwanafunzi</th>
+                            <th>Darasa</th>
+                            <th>Ada Inayotakiwa</th>
+                            <th>Malipo & Salio</th>
+                            <th>Weka Kiasi Kipya (Tsh)</th>
+                            <th>Hali</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for std in wanafunzi %}
+                        <tr>
+                            <td><strong>{{ std.name }}</strong></td>
+                            <td>{{ std.darasa }}</td>
+                            <td>Tsh {{ std.fee_required }}</td>
+                            <td>Imelipwa: Tsh {{ std.ada_iliyolipwa }}<br><strong style="color: #ef4444;">Deni: Tsh {{ std.fee_required - std.ada_iliyolipwa }}</strong></td>
+                            <td>
+                                <form action="{{ url_for('update_fee', username=std.username) }}" method="POST" style="display: flex; gap: 8px; margin: 0;">
+                                    <input type="number" step="0.01" name="ada_iliyolipwa" placeholder="Ingiza kiasi" style="width: 110px; padding: 6px; font-size: 12px;" required>
+                                    <button type="submit" class="btn-action btn-primary-sm" style="background: #16a34a; color: white;">Hifadhi</button>
+                                </form>
+                            </td>
+                            <td><span class="badge badge-success">{{ std.uhakiki_wa_ada }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MATOKEO PDF -->
+        <div id="pdf-card" class="card">
+            <div class="card-title-container">
+                <h3 class="card-title"><i class="fa-solid fa-file-pdf"></i> Nyaraka za Matokeo (PDF)</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jina la Faili</th>
+                            <th>Tarehe ya Kuweka</th>
+                            <th>Kitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pdf in matokeo_pdf %}
+                        <tr>
+                            <td><strong>{{ pdf.filename }}</strong></td>
+                            <td>{{ pdf.upload_date }}</td>
+                            <td>
+                                <a href="{{ url_for('download_results_pdf', filename=pdf.filename) }}" class="btn-action btn-primary-sm" target="_blank"><i class="fa-solid fa-download"></i> Pakua</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #64748b; padding: 25px;">Hakuna mafaili ya matokeo yaliyowekwa kwa sasa.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT YA TABS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const activeTab = localStorage.getItem("activeAdminTab");
+            if (activeTab) {
+                const element = document.querySelector(`[onclick*="${activeTab}"]`);
+                if (element) {
+                    showTab(activeTab, element);
+                }
+            }
+        });
+
+        function showTab(tabId, element) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active'));
+
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            const targetCard = document.getElementById(tabId);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+            if (element) {
+                element.classList.add('active');
+            }
+            
+            localStorage.setItem("activeAdminTab", tabId);
+        }
+    </script>
+</body>
+</html>

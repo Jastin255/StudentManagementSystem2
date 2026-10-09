@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingia Mfumoni</title>
+    <!-- FontAwesome kwa ajili ya Icons za kitaalamu -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body.login-body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        }
+
+        /* 1. SIDEBAR STYLES */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            padding: 25px 18px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+            font-size: 34px;
+            color: #3b82f6;
+        }
+
+        .logo-text h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #f8fafc;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-left: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .role-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border: 1px solid transparent;
+            background-color: #334155;
+            color: #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.25s ease;
+        }
+
+        .role-btn:hover, .role-btn.active {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .register-card-btn {
+            margin-top: auto;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .register-card-btn:hover {
+            background: linear-gradient(135deg, #047857, #059669);
+            transform: translateY(-1px);
+        }
+
+        /* 2. MAIN CONTENT AREA & LOGIN BOX */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 440px;
+            padding: 35px 30px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border-top: 5px solid #2563eb;
+        }
+
+        .login-box h2 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #2563eb;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .real-campus-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            box-shadow: 0 6px 15px rgba(30, 58, 138, 0.25);
+            border: 1px solid #3b82f6;
+        }
+
+        .real-logo-badge {
+            width: 55px;
+            height: 55px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border: 2px solid #60a5fa;
+        }
+
+        .real-logo-badge i {
+            font-size: 26px;
+            color: #1e3a8a;
+        }
+
+        .campus-details h3 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            margin-bottom: 3px;
+        }
+
+        .campus-details p {
+            font-size: 11px;
+            color: #93c5fd;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .campus-status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .login-box input:focus {
+            border-color: #2563eb;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .login-box button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s;
+        }
+
+        .login-box button[type="submit"]:hover {
+            background: linear-gradient(135deg, #1d367d, #1d4ed8);
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: left;
+        }
+        .alert-danger, .alert-error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-info { background-color: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* 3. MODAL POPUP YA REGISTRATION (AUTHENTICATION & COLORATION YA KISASA) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            border-top: 6px solid #059669; /* Rangi ya Kijani ya Usajili */
+            animation: modalPop 0.3s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #94a3b8;
+            background: #f1f5f9;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 5px;
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-content h3 i {
+            color: #059669;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .modal-form label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        .modal-form input, 
+        .modal-form select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background-color: #f8fafc;
+            color: #0f172a;
+            transition: all 0.2s;
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus {
+            border-color: #059669;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .btn-register-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-register-submit:hover {
+            background: linear-gradient(135deg, #047857, #065f46);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="login-body">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-container">
+            <i class="fa-solid fa-graduation-cap logo-icon"></i>
+            <div class="logo-text">
+                <h2>STUDENT PORTAL</h2>
+                <span>Management System</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section-title">Ingia Kama (Login As)</div>
+        <div class="role-selector">
+            <button type="button" class="role-btn active" onclick="setRole('Admin')">
+                <i class="fa-solid fa-user-shield"></i> Admin
+            </button>
+            <button type="button" class="role-btn" onclick="setRole('Teacher')">
+                <i class="fa-solid fa-chalkboard-user"></i> Teacher
+            </button>
+            <button type="button" class="role-btn" onclick="setRole('Student')">
+                <i class="fa-solid fa-user-graduate"></i> Student
+            </button>
+        </div>
+
+        <button type="button" class="register-card-btn" onclick="openRegisterModal()">
+            <i class="fa-solid fa-user-plus"></i> Student Registration
+        </button>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="main-content">
+        <div class="login-box">
+            
+            <div class="real-campus-card">
+                <div class="real-logo-badge">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="campus-details">
+                    <h3>DJANGO ACADEMIC SCHOOL</h3>
+                    <p><i class="fa-solid fa-location-dot"></i> Central Student Portal</p>
+                    <div class="campus-status-tag">
+                        <span class="status-dot"></span> System Active & Secure
+                    </div>
+                </div>
+            </div>
+
+            <h2>STUDENT MANAGEMENT SYSTEM</h2>
+            <div class="role-badge" id="current-role-badge">Session: Admin</div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <input type="hidden" name="role" id="selected_role" value="Admin">
+
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Weka Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Weka Password" required>
+                </div>
+                <button type="submit">Enter (Login)</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP YA STUDENT REGISTRATION (COLORED & STYLED) -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeRegisterModal()">&times;</span>
+            <h3><i class="fa-solid fa-user-plus"></i> Usajili wa Mwanafunzi</h3>
+            <p class="modal-subtitle">Jaza taarifa zako zote kwa usahihi. Admin atathibitisha akaunti yako.</p>
+            
+            <form action="/register-student" method="POST" class="modal-form">
+                <div class="form-group">
+                    <label>Jina Kamili</label>
+                    <input type="text" name="full_name" placeholder="Mfano: Juma Amos" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Barua Pepe (Email)</label>
+                    <input type="email" name="email" placeholder="student@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Darasa / Kidato</label>
+                    <select name="darasa" required>
+                        <option value="">-- Chagua Darasa --</option>
+                        <option value="Form 1">Form 1</option>
+                        <option value="Form 2">Form 2</option>
+                        <option value="Form 3">Form 3</option>
+                        <option value="Form 4">Form 4</option>
+                        <option value="Form 5">Form 5</option>
+                        <option value="Form 6">Form 6</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Namba ya Simu</label>
+                    <input type="text" name="namba_ya_simu" placeholder="Mfano: 0712345678" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Jinsia</label>
+                    <select name="jinsia" required>
+                        <option value="">-- Chagua Jinsia --</option>
+                        <option value="Me">Mume (Male)</option>
+                        <option value="Ke">Mke (Female)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tarehe ya Kuzaliwa</label>
+                    <input type="date" name="tarehe_ya_kuzaliwa" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mahali Anapoishi (Anwani / Eneo)</label>
+                    <input type="text" name="mahali_anapoishi" placeholder="Mfano: Kariakoo, Dar es Salaam" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Jina la Mzazi / Mlezi na Mawasiliano</label>
+                    <input type="text" name="jina_la_mzazi" placeholder="Mfano: Bw. Amos (0783...)" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Weka Password</label>
+                    <input type="password" name="reg_password" placeholder="Tengeneza password yako" required>
+                </div>
+
+                <button type="submit" class="btn-register-submit">Tuma Ombi la Usajili</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        function setRole(role) {
+            document.getElementById('current-role-badge').innerText = 'Session: ' + role;
+            document.getElementById('selected_role').value = role;
+
+            const buttons = document.querySelectorAll('.role-btn');
+            buttons.forEach(btn => {
+                if(btn.innerText.includes(role)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
